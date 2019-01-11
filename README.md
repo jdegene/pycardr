@@ -42,6 +42,6 @@ To make proper use of email notifications, either hardcode your info into sendMa
 	* a folder _im_pot_mactch_ - this will contain potential matching images found
 	* optional a folder img_false - containing knowingly false images or images for testing purposes
 	* a json file searches.json - keys are websites, entries are search queries to pass to this website later on
-3. Run image_handling.py once (change working directory under __name__ == "__main__" first. This will initiate the SQLite database
+3. Run image_handling.py once (change working directory under \_\_name\_\_ == "\_\_main\_\_" first. This will initiate the SQLite database
 4. Run individual functions in website_handling.py or use scheduler.py to run them all. Each function in website_handling.py handles the scraping of a specific site (or several country sites as in the case of ebay)
 5. Wait for the results. Check _im_pot_mactch_ for potentially matching images, or wait for an email (see info under website_handling.py for this) with more likely matches, or manually check ahash, phash, whash values of all images in database. 
