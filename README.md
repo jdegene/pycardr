@@ -15,14 +15,6 @@ If run as file, it will create a new Database in work_fol (if non exists yet) an
 
 Manages how often and what pages of each website are called. Gets a list of image urls from website_handling.py and passes each indivual image to image_handling.py to compute hashes, check against True images in DB and save reference in database. 
 	
-* NoWindowScript.vbs
-	
-Is used to call run_bb.bat. The vbs script is only necessary to suppress the opening of a console window every time the scheduler would call run_bb.bat instead. Call this script from windows scheduler
-
-* run_bb.bat 
-
-batch file to execute scheduler.py script using the correct Python installation
-
 * scheduler.py
 
 File to call from Windows scheduler (in reality it is called through run_bb.bat, which is called by NoWindowScript.vbs). This is the highest level file. It adds the possibililty to run certain websites only for certain days (eg etsy takes long to crawl -> only run every second day). Also writes each successful/unsuccessful crawl attemp into a log file in work_fol
