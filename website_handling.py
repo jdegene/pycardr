@@ -150,7 +150,37 @@ def ansichtskartenversand(search_phrase, page=1):
     return return_list    
 
 
+def cardcow(search_phrase, page=1):
+    
+    url = "https://www.cardcow.com/search3.php?s=" + search_phrase.replace(" ", "+") + \
+          "&section=unsold&sort=d&objects_per_page=200&page=" + str(page)
 
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+    
+    entries = soup.find_all('div', {'class': lambda L: L and L.startswith('product-thumb-container')})    
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site 
+    for entry in entries:    
+        thumb_url = 'https://www.cardcow.com' + entry.find('img')['data-src']
+        entry_id = thumb_url[ thumb_url.rfind('/') + 1 : -4  ]        
+        entry_url = 'https://www.cardcow.com' + entry.findNext('div').find('a')['href']
+ 
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)       
+
+    driver.close()
+    return return_list           
+
+        
 def delcampe(search_phrase, page=1):
     
     if page == 1:
@@ -390,9 +420,9 @@ def hippostcard(search_phrase, page=1):
 def oldpostcards(search_phrase, page=1):
     
     if page == 1:
-        url = 'https://www.oldpostcards.com/' + search_phrase + '.html'
+        url = 'https://www.oldpostcards.com/' + search_phrase.replace(' ', '-') + '.html'
     else:
-        url = 'https://www.oldpostcards.com/' + search_phrase + '-ss' + str(page) + '.html'
+        url = 'https://www.oldpostcards.com/' + search_phrase.replace(' ', '-') + '-ss' + str(page) + '.html'
 
     print(url, "loaded")
     
@@ -410,7 +440,9 @@ def oldpostcards(search_phrase, page=1):
     return_list = []
     # fill return_list with dictionaries containing urls, name, thumburls of images in site     
     for entry in entries:
-        entry_url = entry.find('a')['href']
+        
+        entry_url = entry.find('a', {'href': lambda L: L and L.startswith('http')})['href']
+ 
         thumb_url = entry.find('a', {"class" : "vlightbox1"})['href']
         entry_id = thumb_url[ thumb_url.rfind('/') + 1 : -4  ]
 
