@@ -427,7 +427,7 @@ def oldthing(search_phrase, page=1):
 def postcardshopping(search_phrase, page=1):
     '''search_phrase is ignored, entire collection is gone through'''    
     if page == 1:
-        url = "www.postcardshopping.com/Merchant5/merchant.mvc?Screen=PLST" + \
+        url = "http://www.postcardshopping.com/Merchant5/merchant.mvc?Screen=PLST" + \
               "&Store_Code=TPS&Category_Code=&Product_Code=&Search=&Per_Page=100&Sort_By=newest"
     else:
         offset = (page - 1) * 100
