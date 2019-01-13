@@ -424,4 +424,39 @@ def oldthing(search_phrase, page=1):
     return return_list
     
     
+def postcardshopping(search_phrase, page=1):
+    '''search_phrase is ignored, entire collection is gone through'''    
+    if page == 1:
+        url = "www.postcardshopping.com/Merchant5/merchant.mvc?Screen=PLST" + \
+              "&Store_Code=TPS&Category_Code=&Product_Code=&Search=&Per_Page=100&Sort_By=newest"
+    else:
+        offset = (page - 1) * 100
+        url = "http://www.postcardshopping.com/Merchant5/merchant.mvc?Screen=PLST&" + \
+              "AllOffset=" + str(offset) + "&Offset=" + str(offset) + "&Per_Page=100&Sort_By=newest"            
+              
+    print(url, "loaded")
     
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")              
+
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "column half medium-one-third category-product"}) 
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        entry_url = entry.find('a')['href']
+        thumb_url = 'http://www.postcardshopping.com/Merchant5/' + entry.find('img')['src']        
+        entry_id = thumb_url[ thumb_url.rfind('/') + 1 : -4  ]
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)
+    
+    driver.close()
+    return return_list
+
