@@ -4,6 +4,10 @@ import os
 import sqlite3
 import numpy as np
 import pendulum
+from io import BytesIO
+import requests
+
+import pandas as pd
 
 from PIL import Image
 import imagehash
@@ -345,13 +349,64 @@ def test_hashes(cursor, test_val, test_hash):
     return ret_list
 
 
+
+def get_best_of_the_rest(db_connection, 
+                         hash_type = 'all_non_d',
+                         start_date = '', 
+                         end_date = pendulum.now().to_date_string(),
+                         outFol = '',
+                         get_top = 100):
+    '''
+    Downloads the best hits over a certain period of time. Best hits can be mean of hashes.
+    
+    :db_connection: a database connection, output of connect_db
+    :outFol: folder to save output jpegs to, create folder for this first
+    :get_top: how many best values to download
+    
+    :hash_type: can be either all_non_d (3 hashes, without dhash, default), all (4 hashes), 
+        ahash, dash, phash, whash
+    '''
+    
+    if start_date == '' or outFol == '':
+        print('Enter start_date or output folder')
+        return
+    
+    # get all data from sqlite into dataframe
+    sql_query =  "SELECT * FROM CrawlImgs".format(start_date,end_date)
+    db_df = pd.read_sql(sql_query, db_connection)
+    
+    # filter dataframe by date, create new col to sum requested hash columns
+    db_df = db_df[ (db_df['crawlDate'] >= start_date) & (db_df['crawlDate'] >= end_date)]
+    
+    if hash_type == 'all_non_d':
+        db_df['hash_sum'] = db_df['ahash_min'] + db_df['phash_min'] + db_df['whash_max']
+    elif hash_type == 'all':
+        db_df['hash_sum'] =  db_df['dhash_min'] + db_df['ahash_min'] + db_df['phash_min'] + db_df['whash_max']
+    else:
+        db_df['hash_sum'] =  db_df[hash_type]
+        
+    # sort values by caluclated hash_sum, get url list of top values (lowst values)
+    db_df_sorted = db_df.sort_values('hash_sum')
+    
+    for img_entry in db_df_sorted.iloc[:get_top].iterrows():
+        img = Image.open(BytesIO(requests.get(img_entry[1]['img_Url']).content))
+        img.save(outFol + str(img_entry[1]['hash_sum']) + '_' + str(img_entry[1]['img_id']) + '.jpg')
+        
+
 if __name__ == "__main__":
     
-    work_fol = 'D:/Stuff/Projects/bbeauty/'
-    img_prep(work_fol + "img_raw/", work_fol + "img_processed/")
-    
+    work_fol = 'D:/Stuff/Projects/bbeauty/'        
     conDB, c = connect_db(work_fol + 'Database.sqlite')
-    fill_db(work_fol + 'img_processed/', c, 'TrueImgs')
+    
+    # run this to get best of the rest
+    get_best_of_the_rest(conDB, hash_type = 'all_non_d', start_date = '2019-01-10', 
+                         end_date = pendulum.now().to_date_string(),
+                         outFol = work_fol + 'img_bestoftherest/',
+                         get_top = 100)
+    
+    # run these two if no database existed yet
+    #img_prep(work_fol + "img_raw/", work_fol + "img_processed/")
+    #fill_db(work_fol + 'img_processed/', c, 'TrueImgs')
     
     # Optional, for testing purposes of known false images
     #fill_db(work_fol + 'img_false/', c, 'TestImgs')
