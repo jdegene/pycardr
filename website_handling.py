@@ -526,3 +526,55 @@ def postcardshopping(search_phrase, page=1):
     driver.close()
     return return_list
 
+
+def todocoleccion(website='postales-de-galantes-y-mujeres', page=1):
+    
+    url = 'https://www.todocoleccion.net/s/' + website + '?P=' + str(page)
+    
+    print(url, "loaded")
+
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")    
+    
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "lote-con-foto"})   
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site  
+    for entry in entries:
+        
+        entry_url = "https://www.todocoleccion.net" + entry.find('a')['href']
+        
+        thumb_url_long = entry.find('img')['src']
+        thumb_url = thumb_url_long[ : thumb_url_long.find('.jpg')+4] # cutoff non interesting scaling part
+    
+        entry_id = entry_url[ entry_url.rfind('~') + 1 : ]
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)
+
+    driver.close()
+    return return_list
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
