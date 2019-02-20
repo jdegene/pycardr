@@ -159,9 +159,22 @@ except:
                          " - get_todocoleccion() FAILED"  + "\n"
 
 
-# etsy
-# because etsy takes long, only get etsy every second day
+# oldpostcards4sale.co.uk because it doesnt update very frequently
+# etsy because etsy takes long, only get etsy every second day
 if pendulum.now().day % 2 == 0:
+    
+    # oldpostcards4sale
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_oldpostcards4sale(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_oldpostcards4sale() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_etsy() FAILED"  + "\n" 
+    # etsy
     try:
         num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
         main_handler.get_etsy(work_fol=work_fol, conDB=conDB, c=c)

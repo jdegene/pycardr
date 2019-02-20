@@ -453,6 +453,40 @@ def oldpostcards(search_phrase, page=1):
     return return_list
 
 
+def oldpostcards4sale(search_phrase, page=1):
+    url = 'https://www.oldpostcards4sale.co.uk/search?page=' + str(page) + '&q=' + search_phrase
+    
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+    
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "grid"}) 
+    
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        # skip non postcard entries
+        if len(entry) != 5:
+            continue
+        
+        thumb_url = 'https://' + entry.find('a').find('img')['src'][2:]
+        entry_url = entry.find('a')['href']
+        entry_id = entry_url[entry_url.rfind('ref-') + 4 :]
+        
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)
+    
+    driver.close()
+    return return_list
+
+
 def oldthing(search_phrase, page=1):
     
     if page == 1:
