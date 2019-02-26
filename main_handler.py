@@ -96,6 +96,9 @@ def get_AKH(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json
             # loop over every image on loaded site
             for image in get_page:
                 
+                if image['thumb_url'][-12:] == 'no_image.png':
+                    continue
+                
                 # return 0 if image id is not in database yet
                 imageID_found = image_handling.checkID(image['entry_id'], c, subsite='AKH')
                 exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
