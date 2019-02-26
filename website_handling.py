@@ -107,6 +107,40 @@ def AK(search_phrase, page=1):
 
 
 
+def ansichtskartenhandel(search_phrase, page=1):
+    
+    page_num = (page-1) * 25 
+    url = "https://www.ansichtskartenhandel.at/de/?Params%5BCat%5D=0&Params%5BSearchInDescription"+\
+          "%5D=0&Params%5BSearchParam%5D=" + search_phrase.replace(" ", "+") +\
+          "&ItemSorting=8&aoff=" + str(page_num) + "&BrowseStartLimit="+ str(page_num) +\
+          "&ItemSorting=8&ActionCall=WebActionArticleSearch"
+    
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")   
+    
+    entries = soup.find_all('div', {'class': 'p_listing_box'})
+    
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site 
+    for entry in entries:
+        thumb_url = "https://www.ansichtskartenhandel.at" + entry.find("a").find('img')['src']
+        entry_id = thumb_url[thumb_url.rfind("/") + 1 : -4]
+        entry_url = "https://www.ansichtskartenhandel.at" + entry.find("a")['href']
+        
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)
+
+    driver.close()
+    return return_list   
+
+
 def ansichtskartenversand(search_phrase, page=1):
     
     if page == 1:
