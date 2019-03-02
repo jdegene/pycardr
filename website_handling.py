@@ -20,23 +20,26 @@ from selenium.webdriver.common.keys import Keys
 def sendMail(contents):
     """ Send Email to notify probable findings"""
     
-    uName = open('_Info.txt', "r").readlines()[0].rstrip('\n')
-    uPass = open('_Info.txt', "r").readlines()[1].rstrip('\n')
-    send_to = open('_Info.txt', "r").readlines()[2].rstrip('\n')
-    
-    server = smtplib.SMTP('smtp.web.de', 587)
-    server.starttls()
-    server.login(uName, uPass)
-    
-    msg = EmailMessage()
-    msg.set_content(contents)
-    msg['Subject'] = 'Image Notification'
-    msg['From'] = uName
-    msg['To'] = "You"
-   
-    # make sure username is the email address to send from
-    server.send_message(msg, uName, send_to)
-    server.close()
+    try:
+        uName = open('_Info.txt', "r").readlines()[0].rstrip('\n')
+        uPass = open('_Info.txt', "r").readlines()[1].rstrip('\n')
+        send_to = open('_Info.txt', "r").readlines()[2].rstrip('\n')
+        
+        server = smtplib.SMTP('smtp.web.de', 587)
+        server.starttls()
+        server.login(uName, uPass)
+        
+        msg = EmailMessage()
+        msg.set_content(contents)
+        msg['Subject'] = 'Image Notification'
+        msg['From'] = uName
+        msg['To'] = "You"
+       
+        # make sure username is the email address to send from
+        server.send_message(msg, uName, send_to)
+        server.close()
+    except:
+        print("MAIL SEND ERROR")
 
 
 # # # ID Extraction Functions
