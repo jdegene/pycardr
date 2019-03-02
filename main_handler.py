@@ -207,7 +207,10 @@ def get_antiquepcs(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchte
 
             if imageID_found == 0:
                 # load image url from web to PIL
-                img = Image.open(BytesIO(requests.get(image['thumb_url']).content)) 
+                try:
+                    img = Image.open(BytesIO(requests.get(image['thumb_url']).content)) 
+                except:
+                    continue
 
                 # cheack image's hashes against true images
                 lowest_dhash = image_handling.check_all_hashes(img, 
