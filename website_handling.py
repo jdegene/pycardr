@@ -213,10 +213,11 @@ def antiquepostcardstore(page=1):
         try:
             thumb_url = entry.find('img')['src']
             thumb_url = thumb_url[ : thumb_url.find('?')]
+        
+            entry_id = thumb_url.split('/')[-2]
+            
         except:
             print("no image for:", entry_url)
-        
-        entry_id = thumb_url.split('/')[-2]
 
         entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
         return_list.append(entry_dict)    
