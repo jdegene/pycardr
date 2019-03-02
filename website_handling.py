@@ -667,14 +667,35 @@ def todocoleccion(website='postales-de-galantes-y-mujeres', page=1):
 
 
 
+def vintagepostcards(search_phrase, page=1):
 
+    url = "https://www.vintagepostcards.com/catalogsearch/result/index/?p=" + str(page) + "&q=" + search_phrase.replace(" ", "+")
 
+    print(url, "loaded")
 
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib") 
 
+    # get all entries containing images on site
+    entries = soup.find_all("li", {"class" : lambda L: L and L.startswith('item') }) 
 
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site  
+    for entry in entries:
+        entry_url = entry.find('a')['href']
+        thumb_url = entry.find('img')['src']
+        entry_id = entry_url[ entry_url.rfind('/') + 1 : -5 ]
+        
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)        
 
-
-
+    driver.close()
+    return return_list
 
 
 

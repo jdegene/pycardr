@@ -499,6 +499,7 @@ def get_hippostcard(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searcht
 # # # # # # # # # # # # # # # # # # # #
 
 def get_lamasbolano(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
+    ''' uses no search phrases, skims through entire collection '''
     
     cur_page = 0 # starting page to crawl (will instantly incremented by 1, so 0 is first page)
     existing_share = 0 
@@ -809,7 +810,63 @@ def get_todocoleccion(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searc
 
             print("Last page share was", existing_share)
 
-     
+
+# # # # # # # # # # # # # # # # # # # #
+# # # # # vintagepostcards.com  # # # # 
+# # # # # # # # # # # # # # # # # # # #
+
+def get_vintagepc(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
+    ''' Cannot be sorted by date, uses 29/30 threshold for "relevant" postcards instead '''
+
+    search_list = searchterm_json['vintagepostcards']     
+    
+    for search_term in search_list:
+        
+        cur_page = 0 # starting page to crawl (will instantly incremented by 1, so 0 is first page)
+        existing_share = 0 
+
+        while existing_share < 0.96:
+            cur_page = cur_page + 1
+            get_page = website_handling.vintagepostcards(search_term, page=cur_page)
+
+            if len(get_page) < 2:
+                print("Leaving page, <2 items found")
+                break
+
+            exisiting_imgs_int = 0 # how many imgs on site are already in DB
+
+            # loop over every image on loaded site
+            for image in get_page:     
+
+                # return 0 if image id is not in database yet
+                imageID_found = image_handling.checkID(image['entry_id'], c, subsite='vintagepc')
+                exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
+                existing_share = exisiting_imgs_int / len(get_page) 
+
+                if imageID_found == 0:
+                    # load image url from web to PIL
+                    try:
+                        img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
+                    except:
+                        continue
+  
+                    # cheack image's hashes against true images
+                    lowest_dhash = image_handling.check_all_hashes(img, 
+                                     (image['thumb_url'], image['entry_url'],
+                                      'vintagepc', search_term, image['entry_id']), 
+                                     work_fol,
+                                     c, 
+                                     conDB, 
+                                     threshold=13)
+
+                    # send email notification for every image dHash < 10
+                    if lowest_dhash < 10:
+                        website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
+                                                      image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
+                                                      str(image['entry_id']))
+
+            print("Last page share was", existing_share)
+              
 """
 get_AK()
 get_AKH()
@@ -825,6 +882,7 @@ get_oldpostcards4sale()
 get_postcardshopping()
 get_cardcow()
 get_todocoleccion()
+get_vintagepc()
 """
 
 
