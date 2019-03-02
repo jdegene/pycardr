@@ -218,6 +218,7 @@ def antiquepostcardstore(page=1):
             
         except:
             print("no image for:", entry_url)
+            continue
 
         entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
         return_list.append(entry_dict)    
