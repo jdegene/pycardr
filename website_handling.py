@@ -187,6 +187,40 @@ def ansichtskartenversand(search_phrase, page=1):
     return return_list    
 
 
+def antiquepostcardstore(page=1):
+    
+    url = "http://antiquepostcardstore.com/postcards/page/" + str(page) + "/?sort=newest"
+    
+    print(url, "loaded")
+ 
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+
+    # get all entries containing images on site
+    entries = soup.find_all("li", {"class" :  lambda L: L and L.startswith('product')})       
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        
+        entry_url = entry.find('a')['href']
+        thumb_url = entry.find('img')['src']
+        thumb_url = thumb_url[ : thumb_url.find('?')]
+        
+        entry_id = thumb_url.split('/')[-2]
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)    
+
+    driver.close()
+    return return_list   
+    
+
 def cardcow(search_phrase, page=1):
     
     url = "https://www.cardcow.com/search3.php?s=" + search_phrase.replace(" ", "+") + \
