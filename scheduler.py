@@ -185,7 +185,20 @@ if pendulum.now().day % 2 == 0:
                              str(num_entries_after-num_entries_before) + "\n"
     except:
         log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_etsy() FAILED"  + "\n" 
+                             " - get_oldpostcards4sale() FAILED"  + "\n" 
+
+    # lamasbolano
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_lamasbolano(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_lamasbolano() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_lamasbolano() FAILED"  + "\n" 
+
     # etsy
     try:
         num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
