@@ -484,7 +484,11 @@ def hippostcard(search_phrase, page=1):
         entry_id_raw = entry.find('a')['id']
         entry_id = entry_id_raw[ entry_id_raw.find('-') + 1 :  ]
         
-        thumb_url = 'https://www.hippostcard.com' + entry.find('img')['src']
+        thumb_url = entry.find('img')['src']
+        
+        # some urls reference link on hippostcard.com without domain prefix        
+        if thumb_url.startswith("http") is False:
+            thumb_url = 'https://www.hippostcard.com' + thumb_url
 
         entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
         return_list.append(entry_dict)
