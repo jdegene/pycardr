@@ -257,6 +257,76 @@ def cardcow(search_phrase, page=1):
     driver.close()
     return return_list           
 
+
+def catawiki(page=1, mode='crawl'):
+    ''' bit different than other methods, as each entry can contain multiple postcards, so this process
+    first collects all collections per site, then goes through each collection
+    
+    :mode: crawl = standard mode for image crawling, returns list of dicts with img infos
+           max_site = used to extract info how many sites exist for postcards, returns one integer 
+    
+    '''
+    
+    # this just determines maximum no of pages and returns it as integer number
+    if mode == 'max_site':
+        url = 'https://www.catawiki.com/c/259-postcards'
+        
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options)   
+                
+        driver.get(url)    
+        blankHTML = driver.page_source
+        soup = BeautifulSoup(blankHTML, "html5lib")
+        
+        page_context = soup.find_all('span', {'class':'nav-link page'})
+        
+        driver.close()
+        print("Starting catawiki, Maximum number of sites is:" + page_context[-1].text)
+        return int(page_context[-1].text)
+        
+    # this is the normal img crawling mode
+    else:
+        url = 'https://www.catawiki.com/c/259-postcards?page=' + str(page)
+        
+        print(url, "loaded")
+        
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options)   
+                
+        driver.get(url)    
+        blankHTML = driver.page_source
+        soup = BeautifulSoup(blankHTML, "html5lib")
+            
+        # collect all main sites and add them to list
+        main_sites_list = []
+        entries = soup.find_all('article')
+        for entry in entries:
+            main_sites_list.append(entry.find('a')['href'])
+        
+        # collect all jpg links (one link per postcard) and add to return dictionary
+        for sub_url in main_sites_list:
+            driver.get(sub_url)    
+            sub_blankHTML = driver.page_source
+            sub_soup = BeautifulSoup(sub_blankHTML, "html5lib")
+        
+            return_list = []
+            for pos_img_entry in sub_soup.find_all('a'):
+                try:
+                    if pos_img_entry['href'][-3:] == 'jpg':
+                        thumb_url = pos_img_entry['href']
+                    
+                    entry_id = thumb_url[ thumb_url.rfind("-") + 1 : -4]
+                    entry_dict = {'entry_url': sub_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+                    return_list.append(entry_dict) 
+                    
+                except:
+                    pass
+    
+        driver.close()
+        return return_list
+
         
 def delcampe(search_phrase, page=1):
     

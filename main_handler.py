@@ -279,7 +279,53 @@ def get_cardcow(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_
                                                       str(image['entry_id']))
             
             print("Last page share was", existing_share)
+
+
+# # # # # # # # # # # # # # # # # # # #
+# # # # catawiki.com  # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # #
+
+def get_catwiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
+    
+    ''' As order is always from oldest to newest, function determines last page, then goes backward until page 1'''
+    cur_page = website_handling.catawiki(page=1, mode='max_site')
+
+    existing_share = 0 
+    
+    # run as long as share isnt >0.9 or if page 1 was handled
+    while (existing_share < 0.9) or (cur_page < 1):
+        get_page = website_handling.catawiki(page=cur_page, mode='crawl')
+        cur_page -= 1 # decrease page number AFTER calling website
+        
+        exisiting_imgs_int = 0 # how many imgs on site are already in DB  
+
+        # loop over every image on loaded site
+        for image in get_page:                 
+            # return 0 if image id is not in database yet
+            imageID_found = image_handling.checkID(image['entry_id'], c, subsite='catawiki')
+            exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
+            existing_share = exisiting_imgs_int / len(get_page)        
+
+            if imageID_found == 0:
+                # load image url from web to PIL
+                img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
+
+                # cheack image's hashes against true images
+                lowest_dhash = image_handling.check_all_hashes(img, 
+                                 (image['thumb_url'], image['entry_url'],
+                                  'catawiki', '', image['entry_id']), 
+                                 work_fol,
+                                 c, 
+                                 conDB, 
+                                 threshold=13)       
                 
+                # send email notification for every image dHash < 10
+                if lowest_dhash < 10:
+                    website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
+                                                  image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
+                                                  str(image['entry_id']))
+        print("Last page share was", existing_share)
+        
 # # # # # # # # # # # # # # # # # # # #
 # # # # # delcampe.net  # # # # # # # # 
 # # # # # # # # # # # # # # # # # # # #
@@ -921,6 +967,7 @@ def get_vintagepc(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchter
 get_AK()
 get_AKH()
 get_antiquepcs()
+get_catwiki()
 get_oldthing()
 get_AKV()
 get_Ebay()
