@@ -306,12 +306,12 @@ def catawiki(page=1, mode='crawl'):
             main_sites_list.append(entry.find('a')['href'])
         
         # collect all jpg links (one link per postcard) and add to return dictionary
+        return_list = []
         for sub_url in main_sites_list:
             driver.get(sub_url)    
             sub_blankHTML = driver.page_source
             sub_soup = BeautifulSoup(sub_blankHTML, "html5lib")
         
-            return_list = []
             for pos_img_entry in sub_soup.find_all('a'):
                 try:
                     if pos_img_entry['href'][-3:] == 'jpg':
