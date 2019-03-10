@@ -289,7 +289,7 @@ def get_catwiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_
     
     ''' As order is always from oldest to newest, function determines last page, then goes backward until page 1'''
     cur_page = website_handling.catawiki(page=1, mode='max_site')
-    
+
     existing_share = 0 
     
     # run as long as share isnt >0.9 or if page 1 was handled
@@ -308,7 +308,11 @@ def get_catwiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_
 
             if imageID_found == 0:
                 # load image url from web to PIL
-                img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
+                try:
+                    img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
+                except:
+                    print(image['thumb_url'] + " failed")
+                    continue
 
                 # cheack image's hashes against true images
                 lowest_dhash = image_handling.check_all_hashes(img, 
