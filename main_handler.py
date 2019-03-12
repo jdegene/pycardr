@@ -285,7 +285,7 @@ def get_cardcow(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_
 # # # # catawiki.com  # # # # # # # # #
 # # # # # # # # # # # # # # # # # # # #
 
-def get_catwiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
+def get_catawiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
     
     ''' As order is always from oldest to newest, function determines last page, then goes backward until page 1'''
     cur_page = website_handling.catawiki(page=1, mode='max_site')
@@ -971,7 +971,7 @@ def get_vintagepc(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchter
 get_AK()
 get_AKH()
 get_antiquepcs()
-get_catwiki()
+get_catawiki()
 get_oldthing()
 get_AKV()
 get_Ebay()
