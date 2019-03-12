@@ -72,18 +72,7 @@ try:
 except:
     log_str = log_str + pendulum.now().to_datetime_string() + \
                          " - get_antiquepcs() FAILED" + "\n"
-
-# cardcow
-try:
-    num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-    main_handler.get_cardcow(work_fol=work_fol, conDB=conDB, c=c)
-    num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-    log_str = log_str + pendulum.now().to_datetime_string() + \
-                         " - get_cardcow() successfully run, added lines: " + \
-                         str(num_entries_after-num_entries_before)+ "\n"
-except:
-    log_str = log_str + pendulum.now().to_datetime_string() + \
-                         " - get_cardcow() FAILED" + "\n"     
+ 
 
 # delcampe
 try:
@@ -183,45 +172,20 @@ except:
                          " - get_todocoleccion() FAILED"  + "\n"
 
 
-# oldpostcards4sale.co.uk because it doesnt update very frequently
-# etsy because etsy takes long, only get etsy every second day
+# skip crawling of site to every 2nd day
 if pendulum.now().day % 2 == 0:
-    
-    # catawiki
-    try:
-        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-        main_handler.get_catawiki(work_fol=work_fol, conDB=conDB, c=c)
-        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-        log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_catawiki() successfully run, added lines: " + \
-                             str(num_entries_after-num_entries_before) + "\n"
-    except:
-        log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_catawiki() FAILED"  + "\n" 
-    
-    # oldpostcards4sale
-    try:
-        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-        main_handler.get_oldpostcards4sale(work_fol=work_fol, conDB=conDB, c=c)
-        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-        log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_oldpostcards4sale() successfully run, added lines: " + \
-                             str(num_entries_after-num_entries_before) + "\n"
-    except:
-        log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_oldpostcards4sale() FAILED"  + "\n" 
 
-    # lamasbolano
+    # cardcow
     try:
         num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
-        main_handler.get_lamasbolano(work_fol=work_fol, conDB=conDB, c=c)
+        main_handler.get_cardcow(work_fol=work_fol, conDB=conDB, c=c)
         num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
         log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_lamasbolano() successfully run, added lines: " + \
-                             str(num_entries_after-num_entries_before) + "\n"
+                             " - get_cardcow() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before)+ "\n"
     except:
         log_str = log_str + pendulum.now().to_datetime_string() + \
-                             " - get_lamasbolano() FAILED"  + "\n" 
+                             " - get_cardcow() FAILED" + "\n"   
 
     # vintagepostcards
     try:
@@ -246,7 +210,47 @@ if pendulum.now().day % 2 == 0:
     except:
         log_str = log_str + pendulum.now().to_datetime_string() + \
                              " - get_etsy() FAILED"  + "\n" 
-  
+
+# skip crawling of site to every 3rd day
+if pendulum.now().day % 3 == 0:
+    
+    # catawiki
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_catawiki(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_catawiki() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_catawiki() FAILED"  + "\n" 
+
+    # oldpostcards4sale
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_oldpostcards4sale(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_oldpostcards4sale() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_oldpostcards4sale() FAILED"  + "\n" 
+    
+        # lamasbolano
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_lamasbolano(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_lamasbolano() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_lamasbolano() FAILED"  + "\n" 
+
+
 
 with open(work_fol + '_log.txt', 'a') as w:
     w.write(log_str)
