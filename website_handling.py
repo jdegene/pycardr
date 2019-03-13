@@ -601,6 +601,58 @@ def lamasbolano(page=1):
     return return_list
 
 
+def liveauctioneers(page=1):
+    url = "https://www.liveauctioneers.com/c/postcards/26573/?page=" + str(page) + "&pageSize=24&sort=-saleStart"
+    
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+    
+    # collect all main sites and add them to list
+    main_sites_list = []    
+    entries = soup.find_all('div', {'class':'card___1ZynM cards___2C_7Z'})
+    for entry in entries:
+        main_sites_list.append(entry.find('a')['href'])
+
+    # collect all jpg links (one link per postcard) and add to return dictionary
+    return_list = []
+    for sub_url in main_sites_list:        
+        driver.get("https://www.liveauctioneers.com" + sub_url)    
+        sub_blankHTML = driver.page_source
+        sub_soup = BeautifulSoup(sub_blankHTML, "html5lib")
+        
+        # extract item id from sub_url
+        sub_id = sub_url[ sub_url.find('item/') + 5 : sub_url.find('_')]
+        
+        # write all valid url to pix_url_list
+        pic_url_list = []
+        for pos_img_entry in sub_soup.find_all('img'):            
+            try:
+                # only add jpg links that contain sub_id
+                if ('jpg' in pos_img_entry['src']) and (sub_id in pos_img_entry['src']):
+                    pic_url = pos_img_entry['src']
+                    pic_url = pic_url[ : pos_img_entry['src'].find('.jpg?')+4  ]
+                    pic_url_list.append(pic_url)
+            except:
+                pass
+            
+        # remove duplicates from url_list
+        pic_url_list = list(set(pic_url_list))
+        
+        for single_pic_url in pic_url_list:
+            entry_dict = {'entry_url': sub_url, 'entry_id': sub_id, 'thumb_url':single_pic_url}
+            return_list.append(entry_dict)
+
+    driver.close()
+    return return_list   
+
+
 def oldpostcards(search_phrase, page=1):
     
     if page == 1:

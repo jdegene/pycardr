@@ -225,6 +225,18 @@ if pendulum.now().day % 3 == 0:
     except:
         log_str = log_str + pendulum.now().to_datetime_string() + \
                              " - get_catawiki() FAILED"  + "\n" 
+    
+    # liveauctioneers
+    try:
+        num_entries_before = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        main_handler.get_liveauctioneers(work_fol=work_fol, conDB=conDB, c=c)
+        num_entries_after = c.execute('SELECT Count(*) FROM CrawlImgs').fetchone()[0]
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_liveauctioneers() successfully run, added lines: " + \
+                             str(num_entries_after-num_entries_before) + "\n"
+    except:
+        log_str = log_str + pendulum.now().to_datetime_string() + \
+                             " - get_liveauctioneers() FAILED"  + "\n" 
 
     # oldpostcards4sale
     try:
