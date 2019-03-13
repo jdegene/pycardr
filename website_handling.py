@@ -623,7 +623,11 @@ def liveauctioneers(page=1):
     # collect all jpg links (one link per postcard) and add to return dictionary
     return_list = []
     for sub_url in main_sites_list:        
-        driver.get("https://www.liveauctioneers.com" + sub_url)    
+        try:
+            driver.get("https://www.liveauctioneers.com" + sub_url)    
+        except:
+            print(sub_url + "  passed")
+            continue
         sub_blankHTML = driver.page_source
         sub_soup = BeautifulSoup(sub_blankHTML, "html5lib")
         
