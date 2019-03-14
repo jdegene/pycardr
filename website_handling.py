@@ -567,6 +567,37 @@ def hippostcard(search_phrase, page=1):
     return return_list
 
 
+def kartenplanet(search_phrase, page=1):
+    
+    url = "https://www.kartenplanet.ch/motive/" + search_phrase + "/?p=" + str(page)
+    print(url, "loaded")   
+
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")  
+
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "box--content is--rounded"})  
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        entry_url = entry.find('a')['href']
+        thumb_url = entry.find('img')['srcset']
+        
+        entry_id = entry_url[entry_url.find('Article/') + 8 : entry_url.rfind('/sCategory')]
+        
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)            
+
+    driver.close()
+    return return_list
+
+
 def lamasbolano(page=1):
     
     url = 'http://lamasbolano.com/tienda/9023-postales-antiguas?n=100&p=' + str(page) + '&orderby=date&orderway=desc&id_category=9023'
