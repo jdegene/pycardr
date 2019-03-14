@@ -622,7 +622,10 @@ def get_kartenplanet(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=search
             for image in get_page: 
 
                 # return 0 if image id is not in database yet
-                imageID_found = image_handling.checkID(image['entry_id'], c, subsite='kartenplanet')
+                try:
+                    imageID_found = image_handling.checkID(image['entry_id'], c, subsite='kartenplanet')
+                except:
+                    continue
                 exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
                 existing_share = exisiting_imgs_int / len(get_page)     
 
