@@ -622,16 +622,17 @@ def get_kartenplanet(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=search
             for image in get_page: 
 
                 # return 0 if image id is not in database yet
-                try:
-                    imageID_found = image_handling.checkID(image['entry_id'], c, subsite='kartenplanet')
-                except:
-                    continue
+                imageID_found = image_handling.checkID(image['entry_id'], c, subsite='kartenplanet')
+
                 exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
                 existing_share = exisiting_imgs_int / len(get_page)     
 
                 if imageID_found == 0:
                     # load image url from web to PIL
-                    img = Image.open(BytesIO(requests.get(image['thumb_url']).content)) 
+                    try:
+                        img = Image.open(BytesIO(requests.get(image['thumb_url']).content)) 
+                    except:
+                        continue
 
                     # cheack image's hashes against true images
                     lowest_dhash = image_handling.check_all_hashes(img, 
