@@ -478,6 +478,44 @@ def etsy(search_phrase, page=1):
     return return_list
 
 
+def falkensee(search_phrase, page=1):
+    
+    url = "https://www.antik-falkensee.de/catalog/index.php?cPath=" + search_phrase + "&sort=-1&page=" + str(page)
+    
+    print(url, "loaded")
+
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib") 
+    
+    entries = soup.find("table", {"class" : "productListingData"}).find_all('tr')
+
+    return_list = []
+    for entry in entries:
+        entry_url = ""
+        for url_entries in entry.find_all('a'):            
+            
+            if '.jpg' in url_entries['href'].lower():
+                thumb_url = url_entries['href'].lower()
+                if thumb_url[:4] != 'http':
+                    thumb_url = 'https://www.antik-falkensee.de/catalog/' + thumb_url
+            
+            elif len(entry_url) == 0 and 'product_info.php' in url_entries['href'].lower():
+                entry_url = url_entries['href'].lower()
+        
+        entry_url = entry_url[ : entry_url.rfind('&') ]
+        entry_id = entry_url[ entry_url.rfind('=') + 1 : ]
+        
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)  
+
+    driver.close()
+    return return_list
+
 
 def googleimages(search_phrase, page=1):
     """
@@ -530,6 +568,7 @@ def googleimages(search_phrase, page=1):
 
 
 
+        
 def hippostcard(search_phrase, page=1):
 
     url = "https://www.hippostcard.com/browse/?keywords=" + search_phrase.replace(" ", "+") + \
