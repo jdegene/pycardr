@@ -332,6 +332,8 @@ def darabanth(page, search_phrase = 'Topics_156997'):
     
     url = "https://webshop.darabanth.com/items/category/" + search_phrase+ "/page/" + str(page)
     
+    print(url, "loaded")
+    
     options = webdriver.firefox.options.Options()
     options.add_argument('-headless')
     driver = webdriver.Firefox(options=options)   
