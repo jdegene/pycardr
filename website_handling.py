@@ -327,7 +327,36 @@ def catawiki(page=1, mode='crawl'):
         driver.close()
         return return_list
 
+
+def darabanth(page, search_phrase = 'Topics_156997'):
+    
+    url = "https://webshop.darabanth.com/items/category/" + search_phrase+ "/page/" + str(page)
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+    
+    entries = soup.find_all('div', {'class': "tetel_tartalom"})
+    
+    return_list = []
+    for entry in entries:
         
+        entry_url = entry.find('a', {'class': "gomb_barna"})['href']
+        entry_id =  entry.find('div', {'class': "tetel_id"}).find('font').text
+        thumb_url = entry.find('img', {'class': "main_pic"})['src']
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict) 
+
+    driver.close()
+    return return_list    
+
+
+
 def delcampe(search_phrase, page=1):
     
     if page == 1:
@@ -725,6 +754,41 @@ def liveauctioneers(page=1):
 
     driver.close()
     return return_list   
+
+
+def mau_ak(search_phrase, page=1):
+    
+    url = "https://www.mau-ak.de/" + search_phrase + ".html?page=" + str(page) + "&listing_sort=6"
+
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")
+    
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "product-item"}) 
+
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        entry_url = entry.find('a')['href']
+        thumb_url = entry.find('img')['src']
+        
+        if thumb_url[:4] != 'hhtp':
+            thumb_url = 'https://www.mau-ak.de/' + thumb_url
+        
+        entry_id = entry_url[ entry_url.rfind("-") + 1 :  entry_url.rfind(".") ] 
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)    
+
+    driver.close()
+    return return_list
 
 
 def oldpostcards(search_phrase, page=1):
