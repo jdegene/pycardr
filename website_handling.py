@@ -328,9 +328,15 @@ def catawiki(page=1, mode='crawl'):
         return return_list
 
 
-def darabanth(page, search_phrase = 'Topics_156997'):
+def darabanth(page, search_phrase):
+    """
+    Search phrases require different behaviours, as some are for webshop, while others for live auction
+    """
     
-    url = "https://webshop.darabanth.com/items/category/" + search_phrase+ "/page/" + str(page)
+    if search_phrase in ['Topics_156997']:
+        url = "https://webshop.darabanth.com/items/category/" + search_phrase+ "/page/" + str(page)
+    else:
+        url = "https://www.darabanth.com/de/fernauktion/343/kategorien~Ansichtskarten/" + search_phrase + "/?page=" + str(page)
     
     print(url, "loaded")
     
@@ -342,18 +348,31 @@ def darabanth(page, search_phrase = 'Topics_156997'):
     blankHTML = driver.page_source
     soup = BeautifulSoup(blankHTML, "html5lib")
     
-    entries = soup.find_all('div', {'class': "tetel_tartalom"})
+    if search_phrase in ['Topics_156997']:
+        entries = soup.find_all('div', {'class': "tetel_tartalom"})
+    else:
+        entries = soup.find_all('div', {"class" : lambda L: L and L.startswith('item tetel_nezet_01')})
+    
     
     return_list = []
     for entry in entries:
         
+        # urls should work same for webshop and auction, but might fail due to error
         try:
             entry_url = entry.find('a', {'class': "gomb_barna"})['href']
-            entry_id =  entry.find('div', {'class': "tetel_id"}).find('font').text
             thumb_url = entry.find('img', {'class': "main_pic"})['src']
         except:
             continue
-
+        
+        # ids are referenced differently, first try/except is to distinguish which is which
+        try:
+            entry_id = entry.find('div', {'class': "cat_id"}).text
+        except:
+            try:
+                entry_id =  entry.find('div', {'class': "tetel_id"}).find('font').text
+            except:
+                continue
+        
         entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
         return_list.append(entry_dict) 
 

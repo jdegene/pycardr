@@ -338,48 +338,49 @@ def get_catawiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
 
 def get_darabanth(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json):
     
-    # use only this "search_phrase" (i.e. category) for now
-    search_phrase = 'Topics_156997'
+    # use only this "search_phrases" (i.e. category) for now
+    for search_phrase in ['Topics_156997', 'Themen~2000001',  
+                          'Deutschland~2000040','Postkartensammlungen-Lose~2000004']:
     
-    cur_page = 0 # starting page to crawl (will instantly incremented by 1, so 0 is first page)
-    existing_share = 0 
-    
-    while existing_share < 0.9:
-        cur_page = cur_page + 1
-        get_page = website_handling.darabanth(page=cur_page)
-
-        if len(get_page) < 1: # account for top 6 non interesting thumbs
-            print("Leaving page, <1 items found")
-            break
+        cur_page =0 # starting page to crawl (will instantly incremented by 1, so 0 is first page)
+        existing_share = 0 
         
-        exisiting_imgs_int = 0 # how many imgs on site are already in DB                   
-
-        # loop over every image on loaded site
-        for image in get_page:                 
-            # return 0 if image id is not in database yet
-            imageID_found = image_handling.checkID(image['entry_id'], c, subsite='darabanth')
-            exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
-            existing_share = exisiting_imgs_int / len(get_page)
-
-            if imageID_found == 0:
-                # load image url from web to PIL
-                img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
-
-                # cheack image's hashes against true images
-                lowest_dhash = image_handling.check_all_hashes(img, 
-                                 (image['thumb_url'], image['entry_url'],
-                                  'darabanth', search_phrase, image['entry_id']), 
-                                 work_fol,
-                                 c, 
-                                 conDB, 
-                                 threshold=13)
-                
-                # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
-                    website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
-                                                  image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
-                                                  str(image['entry_id']))
-        print("Last page share was", existing_share)
+        while existing_share < 0.9:
+            cur_page = cur_page + 1
+            get_page = website_handling.darabanth(page=cur_page, search_phrase=search_phrase)
+    
+            if len(get_page) < 1: # account for top 6 non interesting thumbs
+                print("Leaving page, <1 items found")
+                break
+            
+            exisiting_imgs_int = 0 # how many imgs on site are already in DB                   
+    
+            # loop over every image on loaded site
+            for image in get_page:                 
+                # return 0 if image id is not in database yet
+                imageID_found = image_handling.checkID(image['entry_id'], c, subsite='darabanth')
+                exisiting_imgs_int = exisiting_imgs_int + min(imageID_found, 1)
+                existing_share = exisiting_imgs_int / len(get_page)
+    
+                if imageID_found == 0:
+                    # load image url from web to PIL
+                    img = Image.open(BytesIO(requests.get(image['thumb_url']).content))
+    
+                    # cheack image's hashes against true images
+                    lowest_dhash = image_handling.check_all_hashes(img, 
+                                     (image['thumb_url'], image['entry_url'],
+                                      'darabanth', search_phrase, image['entry_id']), 
+                                     work_fol,
+                                     c, 
+                                     conDB, 
+                                     threshold=13)
+                    
+                    # send email notification for every image dHash < 10
+                    if lowest_dhash < 10:
+                        website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
+                                                      image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
+                                                      str(image['entry_id']))
+            print("Last page share was", existing_share)
         
 # # # # # # # # # # # # # # # # # # # #
 # # # # # delcampe.net  # # # # # # # # 
