@@ -347,9 +347,12 @@ def darabanth(page, search_phrase = 'Topics_156997'):
     return_list = []
     for entry in entries:
         
-        entry_url = entry.find('a', {'class': "gomb_barna"})['href']
-        entry_id =  entry.find('div', {'class': "tetel_id"}).find('font').text
-        thumb_url = entry.find('img', {'class': "main_pic"})['src']
+        try:
+            entry_url = entry.find('a', {'class': "gomb_barna"})['href']
+            entry_id =  entry.find('div', {'class': "tetel_id"}).find('font').text
+            thumb_url = entry.find('img', {'class': "main_pic"})['src']
+        except:
+            continue
 
         entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
         return_list.append(entry_dict) 
