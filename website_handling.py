@@ -920,8 +920,54 @@ def oldthing(search_phrase, page=1):
 
     driver.close()
     return return_list
+  
+
     
+def philasearch(search_phrase, page=1):
     
+    set_best = "&set_gesetz_bestaetigt_jn=J&gesetz_bestaetigt_neu=J"
+    
+    if "CPT" in search_phrase:
+        url = "https://www.philasearch.com/de/dosearch.php?treeparent=GRP-15%" + search_phrase + "&page=" + str(page) + set_best
+    else:
+        url = "https://www.philasearch.com/de/tree_PCGRP-4/Sammlungen_und_Posten.html?page=" + str(page) + set_best
+    
+    print(url, "loaded")
+    
+    options = webdriver.firefox.options.Options()
+    options.add_argument('-headless')
+    driver = webdriver.Firefox(options=options)   
+            
+    driver.get(url)    
+    blankHTML = driver.page_source
+    soup = BeautifulSoup(blankHTML, "html5lib")   
+
+    # get all entries containing images on site
+    entries = soup.find_all("div", {"class" : "card flex-container flex-dir-column"}) 
+ 
+    return_list = []
+    # fill return_list with dictionaries containing urls, name, thumburls of images in site     
+    for entry in entries:
+        prefix = "https://www.philasearch.com"
+        
+        # if it doesnt have an url, consider entry as empty whitespace and skip
+        try:
+            entry_longurl = entry.find('a')['href']
+        except:
+            continue
+        entry_url = prefix + entry_longurl[ : entry_longurl.rfind('breadcrumbId') - 1 ]
+        
+        thumb_url = entry.find('img')['src']
+        
+        entry_id = entry.find('span', {"data-block":"identifier"}).text[4:]
+
+        entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+        return_list.append(entry_dict)        
+    
+    driver.close()
+    return return_list        
+
+
 def postcardshopping(search_phrase, page=1):
     '''search_phrase is ignored, entire collection is gone through'''    
     if page == 1:
