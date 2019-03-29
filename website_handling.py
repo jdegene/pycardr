@@ -170,17 +170,16 @@ def ansichtskartenversand(search_phrase, page=1):
     # fill return_list with dictionaries containing urls, name, thumburls of images in site 
     for entry in entries:    
         subentry = entry.contents[0]
-        img_url = subentry.find('a', {'class':'preview'}).contents[0]['src']
+        img_url = subentry.find('source')['srcset']
         if "?" in img_url:
             img_url = img_url[ : img_url.rfind('?') ]
-        img_title = subentry.find('a', {'class':'preview'}).contents[0]['alt']
         
         article_url_short = subentry.find('a', {'class':'preview'})['href']
         article_url = 'https://www.ansichtskartenversand.com/ak/' + article_url_short[ : article_url_short.rfind('/?') ]
         
         img_id = getAKVIdFromUrl(article_url)
         
-        entry_dict = {'entry_url': article_url, 'entry_id': img_id, 'thumb_url':img_url, 'text':img_title}
+        entry_dict = {'entry_url': article_url, 'entry_id': img_id, 'thumb_url':img_url, 'text':""}
         return_list.append(entry_dict)
     
     driver.close()
