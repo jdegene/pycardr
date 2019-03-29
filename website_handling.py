@@ -169,15 +169,20 @@ def ansichtskartenversand(search_phrase, page=1):
     return_list = []
     # fill return_list with dictionaries containing urls, name, thumburls of images in site 
     for entry in entries:    
-        subentry = entry.contents[0]
-        img_url = subentry.find('source')['srcset']
-        if "?" in img_url:
-            img_url = img_url[ : img_url.rfind('?') ]
+        try:
+            subentry = entry.contents[0]
+            img_url = subentry.find('source')['srcset']
+            if "?" in img_url:
+                img_url = img_url[ : img_url.rfind('?') ]
+            
+            article_url_short = subentry.find('a', {'class':'preview'})['href']
+            article_url = 'https://www.ansichtskartenversand.com/ak/' + article_url_short[ : article_url_short.rfind('/?') ]
+            
+            img_id = getAKVIdFromUrl(article_url)
         
-        article_url_short = subentry.find('a', {'class':'preview'})['href']
-        article_url = 'https://www.ansichtskartenversand.com/ak/' + article_url_short[ : article_url_short.rfind('/?') ]
-        
-        img_id = getAKVIdFromUrl(article_url)
+        except:
+            print("entry failed")
+            continue
         
         entry_dict = {'entry_url': article_url, 'entry_id': img_id, 'thumb_url':img_url, 'text':""}
         return_list.append(entry_dict)
