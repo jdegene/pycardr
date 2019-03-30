@@ -10,6 +10,7 @@ import re
 import requests
 import urllib
 import hashlib
+import time
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -1007,6 +1008,76 @@ def postcardshopping(search_phrase, page=1):
     
     driver.close()
     return return_list
+
+
+def saleroom(page=1, mode='main', pass_list = []):
+    """ mode main crawles main page, mode single a single item paged derived from main mode """
+    
+    if mode == 'main':
+        url = "https://www.the-saleroom.com/en-gb/search-filter?searchterm=postcard&sortterm=publishedDate&page=" + str(page)
+        
+        print(url, "loaded")
+    
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options)   
+                
+        driver.get(url)    
+        time.sleep(2)
+        blankHTML = driver.page_source
+        soup = BeautifulSoup(blankHTML, "html5lib")     
+        
+        # get all entries containing images on site
+        entries = soup.find_all("div", {"class" : "lot-single"})  
+        
+        return_list = []
+        # fill return_list with dictionaries containing urls, name, thumburls of images in site  
+        for entry in entries:
+            thumb_url = entry.find('img')['src']
+            if "?" in thumb_url:
+                thumb_url = thumb_url[ : thumb_url.rfind('?') ]
+            entry_url = "https://www.the-saleroom.com" + entry.find('a')['href']
+            entry_id = entry.find('img')['id']
+            
+            entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+            return_list.append(entry_dict)
+        
+        driver.close()
+        return return_list
+    
+    
+    elif mode == 'single':
+        
+        return_list = []
+        for subsite_url in pass_list:
+            options = webdriver.firefox.options.Options()
+            options.add_argument('-headless')
+            driver = webdriver.Firefox(options=options)   
+                    
+            driver.get(subsite_url)    
+            time.sleep(2)
+            blankHTML = driver.page_source
+            soup = BeautifulSoup(blankHTML, "html5lib") 
+            
+
+            entries = soup.find_all("div", {"class" : "extra-images image slick-slide"})  
+                                
+            # fill return_list with dictionaries containing urls, name, thumburls of images in site  
+            for entry in entries:
+                
+                thumb_url = entry.find('img')['src']
+                if "?" in thumb_url:
+                    thumb_url = thumb_url[ : thumb_url.rfind('?') ]
+                entry_id = thumb_url[thumb_url.rfind('/') + 1 : -4]
+                
+                entry_dict = {'entry_url': subsite_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+                return_list.append(entry_dict)
+
+        driver.close()
+        return return_list                
+  
+    else:
+        print("ERROR, UNKNOWN MODE. MODE CAN ONLY BE MAIN OR SINGLE")
 
 
 def todocoleccion(website='postales-de-galantes-y-mujeres', page=1):
