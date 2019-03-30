@@ -1014,7 +1014,8 @@ def saleroom(page=1, mode='main', pass_list = []):
     """ mode main crawles main page, mode single a single item paged derived from main mode """
     
     if mode == 'main':
-        url = "https://www.the-saleroom.com/en-gb/search-filter?searchterm=postcard&sortterm=publishedDate&page=" + str(page)
+        url = "https://www.the-saleroom.com/en-gb/search-filter?"+\
+              "searchterm=postcard&sortterm=publishedDate&page=" + str(page) + "&hasimage=True"
         
         print(url, "loaded")
     
