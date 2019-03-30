@@ -1049,11 +1049,12 @@ def saleroom(page=1, mode='main', pass_list = []):
     
     elif mode == 'single':
         
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options) 
+        
         return_list = []
-        for subsite_url in pass_list:
-            options = webdriver.firefox.options.Options()
-            options.add_argument('-headless')
-            driver = webdriver.Firefox(options=options)   
+        for subsite_url in pass_list:  
                     
             driver.get(subsite_url)    
             time.sleep(2)
@@ -1065,8 +1066,10 @@ def saleroom(page=1, mode='main', pass_list = []):
                                 
             # fill return_list with dictionaries containing urls, name, thumburls of images in site  
             for entry in entries:
-                
-                thumb_url = entry.find('img')['src']
+                try:
+                    thumb_url = entry.find('img')['src']
+                except:
+                    print(subsite_url + " FAILED")
                 if "?" in thumb_url:
                     thumb_url = thumb_url[ : thumb_url.rfind('?') ]
                 entry_id = thumb_url[thumb_url.rfind('/') + 1 : -4]

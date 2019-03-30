@@ -1205,8 +1205,8 @@ def get_saleroom(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
 
             # cheack image's hashes against true images
             lowest_dhash = image_handling.check_all_hashes(img, 
-                             (image['thumb_url'], image['entry_url'],
-                              'saleroom', "", image['entry_id']), 
+                             (subsite_image['thumb_url'], subsite_image['entry_url'],
+                              'saleroom', "", subsite_image['entry_id']), 
                              work_fol,
                              c, 
                              conDB, 
