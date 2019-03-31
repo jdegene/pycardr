@@ -1196,6 +1196,8 @@ def get_saleroom(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
             if imageID_found == 0 and image['thumb_url'][ -15 : ] != 'blank-image.png':
                 pass_list.append(image['entry_url'])
         
+        print("Exsiting share was", existing_share, ", passing on ", len(pass_list), "urls" )
+        
         # pass list of main site urls back to webcrawl function and get all images from single sites
         get_subsites = website_handling.saleroom(page=cur_page, mode='single', pass_list = pass_list)
         
@@ -1218,7 +1220,7 @@ def get_saleroom(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
                                               image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                               str(image['entry_id']))
 
-        print("Last page share was", existing_share)        
+     
                 
 
 # # # # # # # # # # # # # # # # # # # #

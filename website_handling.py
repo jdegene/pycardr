@@ -1037,12 +1037,13 @@ def saleroom(page=1, mode='main', pass_list = []):
             thumb_url = entry.find('img')['src']
             if "?" in thumb_url:
                 thumb_url = thumb_url[ : thumb_url.rfind('?') ]
+            entry_id = thumb_url[thumb_url.rfind('/') + 1 : -4]
             entry_url = "https://www.the-saleroom.com" + entry.find('a')['href']
-            entry_id = entry.find('img')['id']
+            #entry_id = entry.find('img')['id']
             
             entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
             return_list.append(entry_dict)
-        
+
         driver.close()
         return return_list
     
@@ -1075,10 +1076,12 @@ def saleroom(page=1, mode='main', pass_list = []):
                 entry_id = thumb_url[thumb_url.rfind('/') + 1 : -4]
                 
                 entry_dict = {'entry_url': subsite_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
-                return_list.append(entry_dict)
+                
+                if thumb_url not in [i['thumb_url'] for i in return_list]:
+                    return_list.append(entry_dict)
 
         driver.close()
-        return return_list                
+        return return_list
   
     else:
         print("ERROR, UNKNOWN MODE. MODE CAN ONLY BE MAIN OR SINGLE")
