@@ -1055,15 +1055,23 @@ def saleroom(page=1, mode='main', pass_list = []):
         driver = webdriver.Firefox(options=options) 
         
         return_list = []
-        for subsite_url in pass_list:  
+        for subsite_entry in pass_list: 
+            
+            subsite_url = subsite_entry['entry_url']
+            
+            # as main page imgs must no be the same as subsite images, re-append original img entry
+            if subsite_entry["thumb_url"] not in [i['thumb_url'] for i in return_list]:
+                return_list.append(subsite_entry)
                     
             driver.get(subsite_url)    
             time.sleep(2)
             blankHTML = driver.page_source
             soup = BeautifulSoup(blankHTML, "html5lib") 
             
-
-            entries = soup.find_all("div", {"class" : "extra-images image slick-slide"})  
+            tag_list = ["image slick-slide slick-current slick-active",
+                        "image slick-slide slick-current slick-center", 
+                        "extra-images image slick-slide"]
+            entries = soup.find_all("div", {"class" : lambda L: L and L in tag_list })  
                                 
             # fill return_list with dictionaries containing urls, name, thumburls of images in site  
             for entry in entries:
