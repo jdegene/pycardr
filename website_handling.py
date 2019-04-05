@@ -1118,8 +1118,7 @@ def todocoleccion(website='postales-de-galantes-y-mujeres', page=1):
         
         entry_url = "https://www.todocoleccion.net" + entry.find('a')['href']
         
-        thumb_url_long = entry.find('img')['data-original']
-        thumb_url = thumb_url_long[ : thumb_url_long.find('.jpg')+4] # cutoff non interesting scaling part
+        thumb_url = entry.find('a')['data-image-url']
     
         entry_id = entry_url[ entry_url.rfind('~') + 1 : ]
 
