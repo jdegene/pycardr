@@ -687,9 +687,12 @@ def invaluable(page=1, mode='main', pass_list = []):
         return_list = []
         # fill return_list with dictionaries containing urls, name, thumburls of images in site  
         for entry in entries:
-            thumb_url = entry.find('img')['src']
-            entry_url = entry.find('a', {"class" : "bid-link"})['href']
-            entry_id = thumb_url[ thumb_url.rfind('/')+1 : thumb_url.rfind('.') ]
+            try:
+                thumb_url = entry.find('img')['src']
+                entry_url = entry.find('a', {"class" : "bid-link"})['href']
+                entry_id = thumb_url[ thumb_url.rfind('/')+1 : thumb_url.rfind('.') ]
+            except:
+                continue
 
             entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
             return_list.append(entry_dict)
