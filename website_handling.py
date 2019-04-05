@@ -664,6 +664,75 @@ def hippostcard(search_phrase, page=1):
     return return_list
 
 
+def invaluable(page=1, mode='main', pass_list = []):
+    """ mode main crawles main page, mode single a single item paged derived from main mode """
+    
+    if mode == 'main':
+        url = "https://www.invaluable.com/postcards/sc-TRBP91EO8Z/?orderBy=furthest&page=" + str(page) + "&categoryRef=TRBP91EO8Z"        
+
+        print(url, "loaded")
+    
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options)   
+                
+        driver.get(url)    
+        time.sleep(2)
+        blankHTML = driver.page_source
+        soup = BeautifulSoup(blankHTML, "html5lib")     
+
+        # get all entries containing images on site
+        entries = soup.find_all("div", {"class" : "lot-tile"})  
+
+        return_list = []
+        # fill return_list with dictionaries containing urls, name, thumburls of images in site  
+        for entry in entries:
+            thumb_url = entry.find('img')['src']
+            entry_url = entry.find('a', {"class" : "bid-link"})['href']
+            entry_id = thumb_url[ thumb_url.rfind('/')+1 : thumb_url.rfind('.') ]
+
+            entry_dict = {'entry_url': entry_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+            return_list.append(entry_dict)
+
+        driver.close()
+        return return_list
+
+    elif mode == 'single':
+        
+        options = webdriver.firefox.options.Options()
+        options.add_argument('-headless')
+        driver = webdriver.Firefox(options=options) 
+
+        return_list = []
+        for subsite_entry in pass_list:         
+            subsite_url = subsite_entry['entry_url']        
+
+            # as main page imgs must no be the same as subsite images, re-append original img entry
+            if subsite_entry["thumb_url"] not in [i['thumb_url'] for i in return_list]:
+                return_list.append(subsite_entry)
+
+            driver.get(subsite_url)    
+            time.sleep(1)
+            blankHTML = driver.page_source
+            soup = BeautifulSoup(blankHTML, "html5lib")   
+            
+            entries = soup.find_all("a", {"class" : "thumb lot-carousel-thumbnail" }) 
+
+            for entry in entries:
+                thumb_url = entry.find('img')['src']  
+                thumb_url = thumb_url.replace("_thz.", ".")
+                entry_id = thumb_url[ thumb_url.rfind('/')+1 : thumb_url.rfind('.') ]
+                entry_dict = {'entry_url': subsite_url, 'entry_id': entry_id, 'thumb_url':thumb_url}
+
+                if thumb_url not in [i['thumb_url'] for i in return_list]:
+                    return_list.append(entry_dict)
+
+        driver.close()
+        return return_list
+  
+    else:
+        print("ERROR, UNKNOWN MODE. MODE CAN ONLY BE MAIN OR SINGLE")
+
 def kartenplanet(search_phrase, page=1):
     
     url = "https://www.kartenplanet.ch/motive/" + search_phrase + "/?p=" + str(page)
@@ -1009,7 +1078,7 @@ def postcardshopping(search_phrase, page=1):
     driver.close()
     return return_list
 
-
+        
 def saleroom(page=1, mode='main', pass_list = []):
     """ mode main crawles main page, mode single a single item paged derived from main mode """
     
