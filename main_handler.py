@@ -15,6 +15,8 @@ conDB, c = image_handling.connect_db(work_fol + 'Database.sqlite')
 with open(work_fol + 'searches.json', 'r', encoding='utf8') as r:
   searchterm_json = json.load(r)
 
+# dhash value of which, or below, notification email is send
+email_threshold = 8
 
 # # # # # # # # # # # # # # # # # # # #
 # # # # # akpool.de # # # # # # # # # # 
@@ -61,7 +63,7 @@ def get_AK(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json)
                                      threshold=13)
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -118,7 +120,7 @@ def get_AKH(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json
                                      threshold=13)
                    
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -170,7 +172,7 @@ def get_AKV(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_json
                                      threshold=13)
                                      
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -221,7 +223,7 @@ def get_antiquepcs(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchte
                                  conDB, 
                                  threshold=13)
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id']))  
@@ -273,7 +275,7 @@ def get_cardcow(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_
                                      threshold=13)
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -324,7 +326,7 @@ def get_catawiki(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
                                  threshold=13)       
                 
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id']))
@@ -379,7 +381,7 @@ def get_darabanth(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchter
                                      threshold=13)
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -429,7 +431,7 @@ def get_delcampe(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
                                      threshold=13)
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -486,7 +488,7 @@ def get_Ebay(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_jso
                                          threshold=13)
                         
                         # send email notification for every image dHash < 10
-                        if lowest_dhash < 10:
+                        if lowest_dhash < email_threshold:
                             website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                           image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                           str(image['entry_id']))
@@ -538,7 +540,7 @@ def get_etsy(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_jso
                                      threshold=13)
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))          
@@ -589,7 +591,7 @@ def get_falkensee(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchter
                                      threshold=13) 
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id'])) 
@@ -639,7 +641,7 @@ def get_googleimgs(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchte
                                  threshold=13)                   
 
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id'])) 
@@ -690,7 +692,7 @@ def get_hippostcard(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searcht
                                      threshold=13)
                                 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))  
@@ -745,7 +747,7 @@ def get_invaluable(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchte
                              threshold=13)      
 
             # send email notification for every image dHash < 10
-            if lowest_dhash < 10:
+            if lowest_dhash < email_threshold:
                 website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                               image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                               str(image['entry_id']))
@@ -798,7 +800,7 @@ def get_kartenplanet(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=search
                                      threshold=13)
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))  
@@ -846,7 +848,7 @@ def get_lamasbolano(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searcht
                                  conDB, 
                                  threshold=13)
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id']))  
@@ -895,7 +897,7 @@ def get_liveauctioneers(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=sea
                                  threshold=13)  
                 
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id']))
@@ -948,7 +950,7 @@ def get_mau_ak(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm_j
                                      threshold=13)
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -1001,7 +1003,7 @@ def get_oldpostcards(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=search
                                      threshold=13)
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -1056,7 +1058,7 @@ def get_oldpostcards4sale(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=s
                                      threshold=13)   
                     
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))  
@@ -1110,7 +1112,7 @@ def get_oldthing(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
                                      threshold=13)
                                      
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -1162,7 +1164,7 @@ def get_philasearch(work_fol=work_fol, conDB=conDB, c=c):
                                      threshold=13)                
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -1211,7 +1213,7 @@ def get_postcardshopping(work_fol=work_fol, conDB=conDB, c=c):
                                  threshold=13)
                 
                 # send email notification for every image dHash < 10
-                if lowest_dhash < 10:
+                if lowest_dhash < email_threshold:
                     website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                   image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                   str(image['entry_id']))
@@ -1266,7 +1268,7 @@ def get_saleroom(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchterm
                              threshold=13)        
             
             # send email notification for every image dHash < 10
-            if lowest_dhash < 10:
+            if lowest_dhash < email_threshold:
                 website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                               image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                               str(image['entry_id']))
@@ -1323,7 +1325,7 @@ def get_todocoleccion(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searc
                                      threshold=13)
                 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
@@ -1380,7 +1382,7 @@ def get_vintagepc(work_fol=work_fol, conDB=conDB, c=c, searchterm_json=searchter
                                      threshold=13)
 
                     # send email notification for every image dHash < 10
-                    if lowest_dhash < 10:
+                    if lowest_dhash < email_threshold:
                         website_handling.sendMail("dHash " + str(lowest_dhash) + " found. Check out \n" + 
                                                       image['thumb_url'] + "\n" +  image['entry_url'] + "\n" +  
                                                       str(image['entry_id']))
